@@ -28,25 +28,37 @@ import numpy as np
 import PIL.Image
 import os
 
-layers = ['','wavy', 'lines', 'boxes', 'circles', 'animals', 'faces', 'fish', 'Monkies']
-file_name = "TangoForTNT/_.jpg"
-base_name, _ = os.path.splitext(os.path.basename(file_name))
-for layer_id in range(1,8):
-    layer_tensor = model.layer_tensors[layer_id]
-    #file_name = "the-starry-night/the-starry-night-800x450.jpg"    
-    img_result = load_image(filename='{}'.format(file_name))
-    img_result = recursive_optimize(layer_tensor=layer_tensor, image=img_result,
-                    # how clear is the dream vs original image        
-                    num_iterations=20, step_size=1.0, rescale_factor=0.5,
-                    # How many "passes" over the data. More passes, the more granular the gradients will be.
-                    num_repeats=8, blend=0.2)
+inputDirectory = 'D:/clouds/dropsu/photos/néo2'
+inputFiles = os.listdir(inputDirectory)
 
-    img_result = np.clip(img_result, 0.0, 255.0)
-    img_result = img_result.astype(np.uint8)
-    result = PIL.Image.fromarray(img_result, mode='RGB')
-    #result.save('dream_image_out.jpg')
-    result.save(f'out/{base_name}_{layers[layer_id]}.jpg')
-    #result.show()
+layers = ['','wavy', 'lines', 'boxes', 'circles', 'animals', 'faces', 'fish', 'Monkies']
+
+
+def DDFile(file_name, inputLayers=['wavy']):
+    base_name, _ = os.path.splitext(os.path.basename(file_name))
+    for layer in inputLayers:
+        layer_id = layers.index(layer)
+        print(f'DD file "{base_name}" with "{layer_id}:{layer}"')
+        layer_tensor = model.layer_tensors[layer_id]
+        # file_name = "the-starry-night/the-starry-night-800x450.jpg"
+        img_result = load_image(filename=f'{inputDirectory}/{file_name}')
+        img_result = recursive_optimize(layer_tensor=layer_tensor, image=img_result,
+                                        # how clear is the dream vs original image
+                                        num_iterations=20, step_size=1.0, rescale_factor=0.5,
+                                        # How many "passes" over the data. More passes, the more granular the gradients will be.
+                                        num_repeats=8, blend=0.2)
+
+        img_result = np.clip(img_result, 0.0, 255.0)
+        img_result = img_result.astype(np.uint8)
+        result = PIL.Image.fromarray(img_result, mode='RGB')
+        result.save(f'out/{base_name}_{layer}.jpg')
+        # result.show()
+
+
+for f in inputFiles:
+    DDFile(f, ['wavy'])
+
+
 
 
 

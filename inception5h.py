@@ -94,8 +94,13 @@ class Inception5h:
             # platforms. In this case it is saved as a binary file.
 
             # Open the graph-def file for binary reading.
+            # TF 2.0
+            #tf.saved_model.load(os.path.join(data_dir, path_graph_def))
+
+            # TF 1.0
             path = os.path.join(data_dir, path_graph_def)
-            with tf.compat.v1.gfile.FastGFile(path, 'rb') as file:
+            #with tf.compat.v1.gfile.FastGFile(path, 'rb') as file:
+            with tf.io.gfile.GFile(path, 'rb') as file:
                 # The graph-def is a saved copy of a TensorFlow graph.
                 # First we need to create an empty graph-def.
                 graph_def = tf.compat.v1.GraphDef()
